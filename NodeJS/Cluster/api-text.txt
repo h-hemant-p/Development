@@ -1,0 +1,3 @@
+npm i -g autocannon
+
+autocannon -c30 -d10 http://localhost:4400
