@@ -1,90 +1,420 @@
-import numpy as np
-import pandas as pd
+# import streamlit as st
+# import pandas as pd
+# import numpy as np
+# import plotly.express as px
+# from datetime import datetime, timedelta
+
+# # ---------------- CONFIG ----------------
+# st.set_page_config(
+#     page_title="Analytics Dashboard",
+#     page_icon="📊",
+#     layout="wide"
+# )
+
+# # ---------------- SESSION STATE ----------------
+# if "refresh_count" not in st.session_state:
+#     st.session_state.refresh_count = 0
+
+# # ---------------- CUSTOM CSS ----------------
+# st.markdown("""
+# <style>
+#     .kpi-card {
+#         background: linear-gradient(135deg, #667eea, #764ba2);
+#         padding: 20px;
+#         border-radius: 15px;
+#         color: white;
+#         text-align: center;
+#         box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+#     }
+#     .kpi-title {
+#         font-size: 14px;
+#         opacity: 0.9;
+#     }
+#     .kpi-value {
+#         font-size: 30px;
+#         font-weight: bold;
+#     }
+#     .alert-box {
+#         padding: 15px;
+#         border-radius: 10px;
+#         background: #f1f5f9;
+#         margin-bottom: 15px;
+#     }
+# </style>
+# """, unsafe_allow_html=True)
+
+# # ---------------- SIDEBAR ----------------
+# st.sidebar.title("⚙ Dashboard Controls")
+
+# dark_mode = st.sidebar.toggle("🌙 Dark Mode")
+# refresh = st.sidebar.button("🔄 Refresh Data")
+
+# date_range = st.sidebar.date_input(
+#     "📅 Date Range",
+#     [datetime.now() - timedelta(days=30), datetime.now()]
+# )
+
+# category = st.sidebar.multiselect(
+#     "📂 Category",
+#     ["Sales", "Marketing", "Operations"],
+#     default=["Sales", "Marketing", "Operations"]
+# )
+
+# metric = st.sidebar.selectbox(
+#     "📊 Primary Metric",
+#     ["Revenue", "Users", "Orders"]
+# )
+
+# compare_metric = st.sidebar.selectbox(
+#     "📈 Compare With",
+#     ["None", "Revenue", "Users", "Orders"]
+# )
+
+# rolling_avg = st.sidebar.checkbox("📉 Show 7-day Rolling Avg")
+
+# # ---------------- MOCK DATA ----------------
+# np.random.seed(42)
+# dates = pd.date_range(start=date_range[0], end=date_range[1])
+
+# data = pd.DataFrame({
+#     "Date": dates,
+#     "Revenue": np.random.randint(2000, 8000, len(dates)),
+#     "Users": np.random.randint(50, 300, len(dates)),
+#     "Orders": np.random.randint(20, 150, len(dates)),
+# })
+
+# # ---------------- HEADER ----------------
+# st.title("📊 Business Analytics Dashboard")
+# st.caption("Real-time performance insights & reports")
+
+# # ---------------- ALERT SUMMARY ----------------
+# delta_rev = data["Revenue"].iloc[-1] - data["Revenue"].iloc[0]
+# alert_msg = "📈 Revenue increasing" if delta_rev > 0 else "⚠ Revenue declining"
+
+# st.markdown(f"""
+# <div class="alert-box">
+# <strong>Status:</strong> {alert_msg} |
+# Refresh Count: {st.session_state.refresh_count}
+# </div>
+# """, unsafe_allow_html=True)
+
+# # ---------------- KPI SECTION ----------------
+# col1, col2, col3, col4 = st.columns(4)
+
+# with col1:
+#     st.markdown(f"""
+#     <div class="kpi-card">
+#         <div class="kpi-title">Total Revenue</div>
+#         <div class="kpi-value">₹ {data['Revenue'].sum():,}</div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+# with col2:
+#     st.markdown(f"""
+#     <div class="kpi-card">
+#         <div class="kpi-title">Total Users</div>
+#         <div class="kpi-value">{data['Users'].sum():,}</div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+# with col3:
+#     st.markdown(f"""
+#     <div class="kpi-card">
+#         <div class="kpi-title">Total Orders</div>
+#         <div class="kpi-value">{data['Orders'].sum():,}</div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+# with col4:
+#     conversion_rate = (data["Orders"].sum() / data["Users"].sum()) * 100
+#     st.markdown(f"""
+#     <div class="kpi-card">
+#         <div class="kpi-title">Conversion Rate</div>
+#         <div class="kpi-value">{conversion_rate:.2f}%</div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+# st.markdown("---")
+
+# # ================= TABS =================
+# tab1, tab2, tab3, tab4 = st.tabs(
+#     ["📈 Overview", "📊 Charts", "📄 Table", "🧠 Insights"]
+# )
+
+# # ---------------- TAB 1 ----------------
+# with tab1:
+#     st.subheader("Metric Trend")
+
+#     plot_df = data.copy()
+
+#     if rolling_avg:
+#         plot_df[f"{metric}_avg"] = plot_df[metric].rolling(7).mean()
+
+#     fig = px.line(plot_df, x="Date", y=metric, markers=True)
+
+#     if rolling_avg:
+#         fig.add_scatter(
+#             x=plot_df["Date"],
+#             y=plot_df[f"{metric}_avg"],
+#             mode="lines",
+#             name="7-day Avg"
+#         )
+
+#     if compare_metric != "None":
+#         fig.add_scatter(
+#             x=plot_df["Date"],
+#             y=plot_df[compare_metric],
+#             mode="lines",
+#             name=compare_metric
+#         )
+
+#     st.plotly_chart(fig, use_container_width=True)
+
+# # ---------------- TAB 2 ----------------
+# with tab2:
+#     col1, col2 = st.columns(2)
+
+#     with col1:
+#         fig = px.bar(
+#             data,
+#             x="Date",
+#             y=["Users", "Orders"],
+#             barmode="group",
+#             title="Users vs Orders"
+#         )
+#         st.plotly_chart(fig, use_container_width=True)
+
+#     with col2:
+#         pie_data = pd.DataFrame({
+#             "Channel": ["Website", "Mobile App", "Offline"],
+#             "Revenue": [45, 35, 20]
+#         })
+
+#         fig = px.pie(
+#             pie_data,
+#             values="Revenue",
+#             names="Channel",
+#             hole=0.4
+#         )
+#         st.plotly_chart(fig, use_container_width=True)
+
+# # ---------------- TAB 3 ----------------
+# with tab3:
+#     st.dataframe(data, use_container_width=True)
+
+#     csv = data.to_csv(index=False).encode("utf-8")
+#     st.download_button(
+#         "⬇ Download CSV",
+#         csv,
+#         "analytics_report.csv",
+#         "text/csv"
+#     )
+
+# # ---------------- TAB 4 ----------------
+# with tab4:
+#     st.markdown("""
+#     **Automated Insights**
+#     - 📊 Revenue volatility detected
+#     - 👥 User growth stable
+#     - 🛒 Order conversion healthy
+#     - 🎯 Consider mobile-focused campaigns
+#     """)
+
+# # ---------------- REFRESH ACTION ----------------
+# if refresh:
+#     st.session_state.refresh_count += 1
+#     st.toast("Data refreshed successfully!", icon="✅")
+
+# # ---------------- FOOTER ----------------
+# st.markdown("""
+# ---
+# 🟢 App Status: Running | ⚡ Streamlit Analytics Dashboard  
+# """)
 
 import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import time
+from datetime import datetime, timedelta
 
-# st.set_page_config(page_title="Simple Sales Dashboard", layout="wide")
+# =====================================================
+# PAGE CONFIG
+# =====================================================
+st.set_page_config(
+    page_title="Ultimate Streamlit Dashboard",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# # Dummy Data
-# @st.cache_data
-# def load_data():
-#     np.random.seed(42)
-#     data = {
-#         "Date": pd.date_range("2024-01-01", periods=60),
-#         "Region": ["North", "South", "East", "West"] * 15,
-#         "Product": ["Chai", "Coffee", "Green Tea"] * 20,
-#         "Revenue": np.random.randint(500, 3000, 60),
-#         "Units_Sold": np.random.randint(20, 100, 60)
-#     }
-#     return pd.DataFrame(data)
+# =====================================================
+# SESSION STATE
+# =====================================================
+if "counter" not in st.session_state:
+    st.session_state.counter = 0
+if "theme" not in st.session_state:
+    st.session_state.theme = "Light"
 
-# df = load_data()
+# =====================================================
+# CUSTOM CSS
+# =====================================================
+st.markdown("""
+<style>
+.kpi-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+}
+.badge {
+    background:#22c55e;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-# # Sidebar Filters
-# st.sidebar.header("Filters")
-# region_filter = st.sidebar.multiselect("Select Region", df["Region"].unique(), default=df["Region"].unique())
-# product_filter = st.sidebar.multiselect("Select Product", df["Product"].unique(), default=df["Product"].unique())
+# =====================================================
+# SIDEBAR – ALL INPUT TYPES
+# =====================================================
+st.sidebar.title("⚙ Streamlit Controls")
 
-# # Filter Data
-# filtered_df = df[df["Region"].isin(region_filter) & df["Product"].isin(product_filter)]
+st.sidebar.button("🔘 Button")
+toggle = st.sidebar.toggle("🌙 Toggle")
+check = st.sidebar.checkbox("☑ Checkbox", True)
 
-# # KPI Section
-# st.title("📈 Simple Sales Dashboard")
+slider = st.sidebar.slider("🎚 Slider", 0, 100, 50)
+select = st.sidebar.selectbox("📋 Selectbox", ["A", "B", "C"])
+multi = st.sidebar.multiselect("📂 Multiselect", ["Sales", "Marketing", "Ops"])
+radio = st.sidebar.radio("📻 Radio", ["One", "Two", "Three"])
 
-# total_revenue = filtered_df["Revenue"].sum()
-# total_units = filtered_df["Units_Sold"].sum()
-# avg_units = filtered_df["Units_Sold"].mean()
+number = st.sidebar.number_input("🔢 Number Input", 0, 1000, 10)
+color = st.sidebar.color_picker("🎨 Color Picker", "#667eea")
 
-# col1, col2, col3 = st.columns(3)
-# col1.metric("Total Revenue", f"₹{total_revenue:,}")
-# col2.metric("Total Units Sold", total_units)
-# col3.metric("Avg Units per Day", f"{avg_units:.2f}")
+date = st.sidebar.date_input("📅 Date", datetime.now())
+time_input = st.sidebar.time_input("⏰ Time", datetime.now().time())
 
-# st.markdown("---")
+uploaded = st.sidebar.file_uploader("📤 Upload File")
 
-# # Revenue by Product using built-in bar chart
-# st.subheader("Revenue by Product")
-# revenue_chart = filtered_df.groupby("Product")["Revenue"].sum()
-# st.bar_chart(revenue_chart)
+with st.sidebar.form("form"):
+    st.text_input("👤 Username")
+    st.text_area("📝 Feedback")
+    submitted = st.form_submit_button("Submit")
 
-# # Units Sold Over Time using line chart
-# st.subheader("Units Sold Over Time")
-# units_time = filtered_df.groupby("Date")["Units_Sold"].sum()
-# st.line_chart(units_time)
+# =====================================================
+# HEADER
+# =====================================================
+st.title("📊 Ultimate Streamlit Dashboard")
+st.caption("Single-file app showcasing almost all Streamlit features")
 
-# st.markdown("---")
+st.markdown("""
+<div style="display:flex; justify-content:space-between;">
+<span class="badge">● Live</span>
+<span>User: Admin</span>
+</div>
+""", unsafe_allow_html=True)
 
-# # Show Table
-# st.subheader("Raw Data")
-# st.dataframe(filtered_df.sort_values(by="Date", ascending=False), use_container_width=True)
+# =====================================================
+# DATA (CACHED)
+# =====================================================
+@st.cache_data
+def load_data():
+    dates = pd.date_range(datetime.now() - timedelta(days=30), datetime.now())
+    return pd.DataFrame({
+        "Date": dates,
+        "Revenue": np.random.randint(2000, 8000, len(dates)),
+        "Users": np.random.randint(50, 300, len(dates)),
+        "Orders": np.random.randint(20, 150, len(dates)),
+    })
 
+data = load_data()
 
+# =====================================================
+# METRICS
+# =====================================================
+c1, c2, c3, c4 = st.columns(4)
 
-# -------------------------------------
-# st.title("Chai Maker App")
+c1.metric("Revenue", f"₹ {data.Revenue.sum():,}", "↑ 12%")
+c2.metric("Users", data.Users.sum(), "↑ 5%")
+c3.metric("Orders", data.Orders.sum(), "↓ 2%")
+c4.metric("Conversion", f"{(data.Orders.sum()/data.Users.sum())*100:.2f}%")
 
-# if st.button("Make Chai"):
-#     st.success("Your chai is being brewed")
+# =====================================================
+# TABS
+# =====================================================
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    ["📈 Charts", "📊 Data", "📂 Media", "🧠 State", "🛠 Utilities"]
+)
 
-# add_masala = st.checkbox("Add Masala")
+# ---------------- TAB 1 ----------------
+with tab1:
+    fig = px.line(data, x="Date", y="Revenue", markers=True)
+    st.plotly_chart(fig, use_container_width=True)
 
-# if add_masala:
-#     st.write("Masala added to your chai")
+# ---------------- TAB 2 ----------------
+with tab2:
+    st.dataframe(data)
+    st.table(data.head())
+    st.json(data.head(2).to_dict())
 
-# tea_type = st.radio("Pick your chai base: ", ["Milk", "Water", "Almond Milk"])
-# st.write(f"Selected base {tea_type}")
-# flavour = st.selectbox("Choose flavour: ", ["Adrak", "Kesar", "Tulsi"])
-# st.write(f"Selected Flavour {flavour}")
+    st.download_button(
+        "⬇ Download CSV",
+        data.to_csv(index=False),
+        "data.csv"
+    )
 
-# sugar = st.slider("Sigar level (spoon)", 0, 5, 4)
-# st.write(f"Selected sugar level {sugar}")
+# ---------------- TAB 3 ----------------
+with tab3:
+    st.image(
+        "https://streamlit.io/images/brand/streamlit-logo-secondary-colormark-darktext.png",
+        width=200
+    )
+    st.video("https://www.youtube.com/watch?v=R2nr1uZ8ffc")
 
-# cups = st.number_input("How many cups", min_value=1, max_value=10, step=1)
-# st.write(f"Selected sugar level {cups}")
+# ---------------- TAB 4 ----------------
+with tab4:
+    if st.button("➕ Increment Counter"):
+        st.session_state.counter += 1
 
-# name = st.text_input("Enter your name")
-# if name:
-#     st.write(f"Welcome, {name} ! Your chai is on the way")
+    st.write("Counter value:", st.session_state.counter)
 
-# dob = st.date_input("Select your date of birth")
-# st.write(f"Your date of birth {dob}")
+    if st.button("🔄 Rerun App"):
+        st.experimental_rerun()
+
+# ---------------- TAB 5 ----------------
+with tab5:
+    with st.spinner("Processing..."):
+        time.sleep(1)
+
+    st.progress(70)
+
+    st.success("Success message")
+    st.warning("Warning message")
+    st.error("Error message")
+    st.info("Info message")
+    st.toast("Toast notification 🔔")
+
+# =====================================================
+# EXPANDER
+# =====================================================
+with st.expander("📘 See Explanation"):
+    st.markdown("""
+    This app demonstrates:
+    - Almost all Streamlit widgets
+    - Layout controls
+    - State management
+    - Charts, tables, media
+    - Forms, caching, downloads
+    """)
+
+# =====================================================
+# FOOTER
+# =====================================================
+st.markdown("""
+---
+🚀 **Ultimate Streamlit Reference App**  
+Built for learning, demos & interviews
+""")
