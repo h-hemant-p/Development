@@ -1,0 +1,38 @@
+### Bloom Filter for Username Creation
+
+#### 1. Initialization:
+- Create a Bloom filter with a bit array of a certain size (e.g., 1 million bits).
+- Choose a number of hash functions (e.g., 3 different hash functions).
+
+#### 2. Adding a Username:
+- Take the username to be added (e.g., `john_doe`).
+- Apply the chosen hash functions to the username to get multiple hash values.
+- Each hash value corresponds to a position in the bit array. For example, the hash values might be `12345`, `67890`, and `54321`.
+- Set the bits at these positions in the bit array to `1`.
+
+#### 3. Checking for a Username:
+- Take the username to be checked (e.g., `john_doe`).
+- Apply the same hash functions to get hash values.
+- Check the positions in the bit array indicated by these hash values.
+- If all the corresponding bits are `1`, the username is likely already in the set (possible false positive).
+- If any of the bits is `0`, the username is definitely not in the set.
+
+#### Example:
+
+1. **Initialization:**
+   - Bit array: `[0, 0, 0, 0, ..., 0]` (1 million bits, all set to `0`)
+   - Hash functions: `hash1`, `hash2`, `hash3`
+
+2. **Adding `john_doe`:**
+   - Hash values: `12345`, `67890`, `54321`
+   - Bit array after addition: `[..., 1 (at 12345), 0, ..., 1 (at 67890), 0, ..., 1 (at 54321), ...]`
+
+3. **Checking `john_doe`:**
+   - Hash values: `12345`, `67890`, `54321`
+   - Check bits at these positions: All are `1` → `john_doe` is likely in the set.
+
+4. **Checking `jane_doe`:**
+   - Hash values: `54322`, `67891`, `12346`
+   - Check bits at these positions: At least one is `0` → `jane_doe` is definitely not in the set.
+
+---
